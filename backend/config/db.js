@@ -11,12 +11,13 @@ import mongoose from 'mongoose';
 export const connectDB = async () => {
   try {
     // Connect to MongoDB using the URI from environment variables
-    await mongoose.connect(process.env.MONGODB_URI, {
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
 
-    console.log('✅ MongoDB connected successfully');
+    // Log successful connection
+    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
     // Log any error that occurs during connection
     console.error('❌ MongoDB connection error:', error);
