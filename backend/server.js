@@ -1,9 +1,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
-import Product from './models/product.model.js'; 
+import Product from './models/product.model.js';
 
-dotenv.config();
+dotenv.config(); // ✅ Load environment variables from .env file
 
 const app = express();
 
@@ -35,6 +35,22 @@ app.post('/api/products', async (req, res) => {
 });
 
 /**
+ * @route   GET /api/products
+ * @desc    Fetch all products from the database
+ * @access  Public
+ */
+app.get('/api/products', async (req, res) => {
+    try {
+        // ✅ Retrieve all products
+        const products = await Product.find({});
+        return res.status(200).json({ success: true, data: products });
+    } catch (error) {
+        console.error('Error fetching products:', error.message);
+        return res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+/**
  * @route   DELETE /api/products/:id
  * @desc    Delete a product by ID
  * @access  Public
@@ -55,7 +71,7 @@ app.delete('/api/products/:id', async (req, res) => {
         return res.status(200).json({ success: true, data: product });
     } catch (error) {
         console.error('Error deleting product:', error.message);
-        return res.status(500).json({ success: false, message: 'Server error' });
+        return res.status(500).json({ success: false, message: 'Product not found' });
     }
 });
 
