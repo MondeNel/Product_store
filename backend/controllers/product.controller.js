@@ -1,4 +1,4 @@
-import Product from '../models/Product.js';
+import Product from '../models/product.model.js';
 
 /**
  * @route   GET /api/products
@@ -20,7 +20,7 @@ export const getProducts = async (req, res) => {
  * @desc    Create a new product
  * @access  Public
  */
-export const postProducts = async (req, res) => {
+export const createProducts = async (req, res) => {
     const product = req.body;
 
     // ✅ Validate required fields
