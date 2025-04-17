@@ -11,11 +11,11 @@ const app = express();
 app.use(express.json());
 
 /**
- * @route   POST /products
+ * @route   POST /api/products
  * @desc    Create a new product
  * @access  Public
  */
-app.post('/products', async (req, res) => {
+app.post('/api/products', async (req, res) => {
     const product = req.body;
 
     // ✅ Validate required fields
@@ -30,6 +30,31 @@ app.post('/products', async (req, res) => {
         return res.status(201).json({ success: true, data: newProduct });
     } catch (error) {
         console.error('Error saving product:', error.message);
+        return res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+/**
+ * @route   DELETE /api/products/:id
+ * @desc    Delete a product by ID
+ * @access  Public
+ */
+app.delete('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // ✅ Attempt to find and delete the product by its ID
+        const product = await Product.findByIdAndDelete(id);
+
+        // ✅ If product not found, return 404
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        // ✅ Return success response with deleted product data
+        return res.status(200).json({ success: true, data: product });
+    } catch (error) {
+        console.error('Error deleting product:', error.message);
         return res.status(500).json({ success: false, message: 'Server error' });
     }
 });
