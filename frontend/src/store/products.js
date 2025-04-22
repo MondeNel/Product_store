@@ -83,4 +83,48 @@ export const useProductStore = create((set) => ({
       console.error('An error occurred while fetching products:', error);
     }
   },
+
+/**
+ * Deletes a product from the server and updates the local product state.
+ *
+ * @async
+ * @function deleteProduct
+ * @param {string} productId - The unique ID of the product to be deleted.
+ * @returns {Promise<Object>} A result object containing success status and message.
+ *
+ * @example
+ * const result = await deleteProduct('123abc');
+ * if (result.success) {
+ *   console.log(result.message);
+ * }
+ */
+deleteProduct: async (productId) => {
+  // Send DELETE request to backend API
+  const res = await fetch(`/api/products/${productId}`, {
+    method: 'DELETE',
+  });
+
+  // Parse the JSON response
+  const data = await res.json();
+
+  // If deletion failed on server, return a failure message
+  if (!data.success) {
+    return {
+      success: false,
+      message: data.message || 'Failed to delete product',
+    };
+  }
+
+  // Update local state: remove the deleted product from the product list
+  set((state) => ({
+    products: state.products.filter((product) => product._id !== productId),
+  }));
+
+  // Return success result
+  return {
+    success: true,
+    message: 'Product deleted successfully',
+  };
+},
+
 }));
