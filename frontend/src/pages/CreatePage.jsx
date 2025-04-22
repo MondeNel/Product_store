@@ -6,7 +6,8 @@ import {
   Heading,
   Input,
   useColorModeValue,
-  VStack
+  VStack,
+  useToast
 } from '@chakra-ui/react';
 
 import { InputGroup, InputLeftAddon } from '@chakra-ui/react';
@@ -33,18 +34,35 @@ const CreatePage = () => {
     image: '',
   });
 
+  const toast = useToast();
+  // Chakra UI toast for notifications (not used in this snippet, but can be added later)
+
     // Function to handle form submission and product creation
     const { createProduct } = useProductStore();
 
   // Placeholder function for handling product creation logic
   const handleAddProduct = async () => {
     const { success, message } = await createProduct(newProduct);
-    if (success) {
-      alert('Product created successfully!');
+    if (!success) {
+      toast({
+        title: 'Error creating product',
+        description: message,
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
       setNewProduct({ name: '', price: '', image: '' }); // Reset form fields
     } else {
-      alert(message); // Show error message
+        toast({
+            title: 'Product created',
+            description: message,
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
+        });
+        setNewProduct({ name: '', price: '', image: '' }); // Reset form fields
     }
+    console.log('Product created:', newProduct); // Log the new product details
   }
 
   return (
