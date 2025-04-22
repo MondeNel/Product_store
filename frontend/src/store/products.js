@@ -64,4 +64,23 @@ export const useProductStore = create((set) => ({
       };
     }
   },
+
+  /**
+   * fetchProducts - Fetches all products from the API and updates the store
+   */
+
+  fetchProducts: async () => {
+    try {
+      const res = await fetch('/api/products');
+      const data = await res.json();
+
+      if (res.ok) {
+        set({ products: data.data });
+      } else {
+        console.error('Failed to fetch products:', data.message);
+      }
+    } catch (error) {
+      console.error('An error occurred while fetching products:', error);
+    }
+  },
 }));
