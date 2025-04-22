@@ -47,6 +47,7 @@ const HomePage = () => {
             justifyItems="center"
             w={"full"}
         >
+            {/* Product Cards */}
             {products.map((product) => (
                 <ProductCard key={product._id} product={product}/>
             ))}
