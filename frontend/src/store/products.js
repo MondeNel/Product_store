@@ -1,51 +1,67 @@
 import { create } from 'zustand';
 
 /**
- * Product store using Zustand for managing product state.
- * 
- * This store handles the following actions for products:
- * - Adding a product
- * - Removing a product by its ID
- * - Updating an existing product
- * 
- * It uses Zustand to manage state and expose actions to interact with product data.
+ * useProductStore - Zustand store for managing product state and actions.
  *
- * @module useProductStore
- * @returns {Object} The store that contains products and methods to manipulate them.
+ * Store includes:
+ * - products: Array of product objects
+ * - setProducts: Function to directly replace the product list
+ * - createProduct: Async function to validate and post a new product to the server
+ *
+ * @returns {Object} Zustand state and action methods
  */
 export const useProductStore = create((set) => ({
-    // Initial state: an empty array of products
-    products: [],
+  // Array to hold all product objects
+  products: [],
 
-    /**
-     * Adds a new product to the store.
-     * 
-     * @param {Object} product - The product to add, must contain properties like id, name, price, etc.
-     */
-    addProduct: (product) => set((state) => ({
-        // Adds the new product to the list of existing products
-        products: [...state.products, product]
-    })),
+  /**
+   * setProducts - Replaces the current product list with a new one
+   * @param {Array} products - New array of products to set
+   */
+  setProducts: (products) => set({ products }),
 
-    /**
-     * Removes a product from the store by its unique ID.
-     * 
-     * @param {string} id - The unique identifier for the product to remove.
-     */
-    removeProduct: (id) => set((state) => ({
-        // Filters out the product with the given ID
-        products: state.products.filter(product => product.id !== id)
-    })),
+  /**
+   * createProduct - Creates a new product after validation and API call
+   *
+   * @param {Object} newProduct - Product object containing name, price, image
+   * @returns {Promise<{success: boolean, message: string}>}
+   */
+  createProduct: async (newProduct) => {
+    // Basic validation to ensure all fields are filled
+    if (!newProduct.name || !newProduct.price || !newProduct.image) {
+      return { success: false, message: 'Please fill all fields' };
+    }
 
-    /**
-     * Updates an existing product in the store.
-     * 
-     * @param {Object} updatedProduct - The product object with updated information.
-     */
-    updateProduct: (updatedProduct) => set((state) => ({
-        // Updates the existing product with the same ID in the products array
-        products: state.products.map(product =>
-            product.id === updatedProduct.id ? updatedProduct : product
-        )
-    }))
+    try {
+      // Send POST request to the API
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProduct),
+      });
+
+      // Parse the response
+      const data = await res.json();
+
+      if (res.ok) {
+        // Add newly created product to local store
+        set((state) => ({
+          products: [...state.products, data.data],
+        }));
+        return { success: true, message: 'Product created successfully' };
+      } else {
+        return {
+          success: false,
+          message: data.message || 'Failed to create product',
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || 'An unexpected error occurred',
+      };
+    }
+  },
 }));
