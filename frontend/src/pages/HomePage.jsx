@@ -1,6 +1,7 @@
-import React from 'react';
-import { Container, VStack, Text, Link } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { Container, VStack, Text, Link, SimpleGrid } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useProductStore } from '../store/products';
 
 /**
  * HomePage component displays the main heading and serves
@@ -12,6 +13,18 @@ import { Link as RouterLink } from 'react-router-dom';
  * @returns {JSX.Element} The HomePage component
  */
 const HomePage = () => {
+
+    
+    const { fetchProducts, products } = useProductStore();
+
+    useEffect(() => 
+    {
+        // Fetch products when the component mounts
+        fetchProducts();
+    }, [fetchProducts]);
+    console.log(products)
+    
+
   return (
     <Container maxW="container.xl" py={12}>
       <VStack spacing={8}>
@@ -25,6 +38,21 @@ const HomePage = () => {
         >
           Current Products 🚀
         </Text>
+
+
+
+        <SimpleGrid
+            columns={{ base: 1, md: 2, lg: 3 }}
+            spacing={8}
+            justifyItems="center"
+            w={"full"}
+        >
+            {products.map((product) => (
+                <ProductCard key={product._id} product={product}/>
+            ))}
+        </SimpleGrid>
+
+
 
         {/* Fallback Message and Link */}
         <Text fontSize="xl" textAlign="center" color="gray.500" fontWeight="bold">
