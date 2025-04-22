@@ -1,5 +1,7 @@
-import { Box, Heading, Image, Text } from '@chakra-ui/react';
+import { Box, Heading, HStack, IconButton, Image, Text, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
+import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
+
 
 /**
  * ProductCard component displays an individual product with its image, name, and price.
@@ -10,7 +12,13 @@ import React from 'react';
  * @param {number} product.price - The price of the product.
  * @returns {JSX.Element} The ProductCard component.
  */
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onOpen, handleDelete }) => {
+
+    const textColor = useColorModeValue('gray.600', 'gray.200');
+    const bg = useColorModeValue('white', 'gray.800');
+
+
+
   return (
     <Box
       shadow="lg"
@@ -18,6 +26,7 @@ const ProductCard = ({ product }) => {
       overflow="hidden"
       transition="all 0.3s"
       _hover={{ transform: 'translateY(-5px)', shadow: 'xl' }}
+      bg={bg}
     >
       {/* Product image */}
       <Image
@@ -36,9 +45,14 @@ const ProductCard = ({ product }) => {
         </Heading>
 
         {/* Product price */}
-        <Text fontSize="lg" fontWeight="bold" color="gray.700">
-          ${product.price.toFixed(2)} {/* Displaying the price formatted */}
+        <Text fontSize="xl" fontWeight="bold" color={textColor} mb={4}>
+          ${product.price}
         </Text>
+
+        <HStack spacing={2}>
+            <IconButton icon={<EditIcon />} onClick={onOpen} colorScheme='blue' />
+            <IconButton icon={<DeleteIcon />} onClick={() => handleDelete(product._id)} colorScheme='red' />
+        </HStack>
       </Box>
     </Box>
   );
