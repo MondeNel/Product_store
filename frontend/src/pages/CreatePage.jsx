@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 
 import { InputGroup, InputLeftAddon } from '@chakra-ui/react';
+import { useProductStore } from '../store/products.js';
 
 /**
  * CreatePage component allows users to add a new product.
@@ -32,11 +33,19 @@ const CreatePage = () => {
     image: '',
   });
 
+    // Function to handle form submission and product creation
+    const { createProduct } = useProductStore();
+
   // Placeholder function for handling product creation logic
-  const handleAddProduct = () => {
-    console.log("Product to add:", newProduct);
-    // Here, you'd typically submit the newProduct to a backend or update app state
-  };
+  const handleAddProduct = async () => {
+    const { success, message } = await createProduct(newProduct);
+    if (success) {
+      alert('Product created successfully!');
+      setNewProduct({ name: '', price: '', image: '' }); // Reset form fields
+    } else {
+      alert(message); // Show error message
+    }
+  }
 
   return (
     <Container maxW="container.sm">
@@ -66,18 +75,18 @@ const CreatePage = () => {
               }
             />
 
-<InputGroup>
-  <InputLeftAddon children="$" />
-  <Input
-    placeholder="Product Price"
-    name="price"
-    type="number"
-    value={newProduct.price}
-    onChange={(e) =>
-      setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })
-    }
-  />
-</InputGroup>
+            <InputGroup>
+            <InputLeftAddon children="$" />
+            <Input
+                placeholder="Product Price"
+                name="price"
+                type="number"
+                value={newProduct.price}
+                onChange={(e) =>
+                setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })
+                }
+            />
+            </InputGroup>
 
 
             {/* Input: Product Image URL */}
