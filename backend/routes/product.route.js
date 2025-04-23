@@ -29,6 +29,6 @@ router.delete('/:id', deleteProducts);
  * @desc    Partially update an existing product by ID
  * @access  Public
  */
-router.patch('/:id', updateProducts);
+router.put('/:id', updateProducts);
 
 export default router;
