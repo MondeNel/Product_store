@@ -94,23 +94,17 @@ The application will be running at `http://localhost:5173`.
 ## Folder Structure
 ```bash
 product_store/
-├── client/               # React Frontend
+├── frontend/             # React Frontend
 │   ├── components/
 │   ├── store/            # Zustand store
 │   └── ...
-├── server/               # Express Backend
+├── backend/              # Express Backend
 │   ├── models/           # Mongoose models
 │   ├── routes/           # API routes
 │   └── ...
 └── README.md
 ```
 
----
-
-## Contributing
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
----
 
 ## License
 This project is licensed under the MIT License.
