@@ -128,44 +128,30 @@ deleteProduct: async (productId) => {
 },
   
   
-/**
-* updateProduct - Updates an existing product in the store and on the server
-*
-* @param {string} productId - The ID of the product to update
-* @param {Object} updatedProduct - The updated product data
-* @returns {Promise<{success: boolean, message: string}>}
-*/
-updateProduct: async (productId, updatedProduct) => {
-  try {
-    const res = await fetch(`/api/products/${productId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedProduct),
-    });
+  /**
+  * updateProduct - Updates an existing product in the store and on the server
+  *
+  * @param {string} productId - The ID of the product to update
+  * @param {Object} updatedProduct - The updated product data
+  * @returns {Promise<{success: boolean, message: string}>}
+  */
+  updateProduct: async (pid, updatedProduct) => {
+		const res = await fetch(`/api/products/${pid}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(updatedProduct),
+		});
+		const data = await res.json();
+		if (!data.success) return { success: false, message: data.message };
 
-    const data = await res.json();
+		// update the ui immediately, without needing a refresh
+		set((state) => ({
+			products: state.products.map((product) => (product._id === pid ? data.data : product)),
+		}));
 
-    if (res.ok) {
-      set((state) => ({
-        products: state.products.map((product) =>
-          product._id === productId ? data.data : product
-        ),
-      }));
-      return { success: true, message: 'Product updated successfully' };
-    } else {
-      return {
-        success: false,
-        message: data.message || 'Failed to update product',
-      };
-    }
-  } catch (error) {
-    return {
-      success: false,
-      message: error.message || 'An unexpected error occurred',
-    };
-  }
-},
+		return { success: true, message: data.message };
+	},
 
 }));

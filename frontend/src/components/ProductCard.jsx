@@ -13,9 +13,11 @@ import {
     ModalHeader,
     ModalCloseButton,
     ModalBody,
+    ModalFooter,
     VStack,
     Input,
-    useDisclosure
+    useDisclosure,
+    Button
   } from '@chakra-ui/react';
   import React, { useState } from 'react';
   import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -37,38 +39,35 @@ import {
     const bg = useColorModeValue('white', 'gray.800');
     const toast = useToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { deleteProduct } = useProductStore();
+    const { deleteProduct, updateProduct } = useProductStore(); 
   
-    // Local state for editing product
     const [updatedProduct, setUpdatedProduct] = useState({
       name: product.name,
       price: product.price,
       image: product.image,
     });
   
-    /**
-     * Deletes a product and shows toast feedback.
-     *
-     * @param {string} pid - The product ID.
-     */
     const handleDeleteProduct = async (pid) => {
       const { success, message } = await deleteProduct(pid);
-      if (success) {
-        toast({
-          title: 'Product deleted.',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Error deleting product.',
-          description: message,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+      toast({
+        title: success ? 'Product deleted.' : 'Error deleting product.',
+        description: !success ? message : undefined,
+        status: success ? 'success' : 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    };
+  
+    /**
+     * Handles updating a product and closes modal if successful.
+     * @param {string} pid - Product ID.
+     * @param {Object} updatedData - New product data.
+     */
+
+
+    const handleUpdateProduct = async (pid, updatedData) => {
+      await updateProduct(pid, updatedProduct);
+      onClose(); // Close the modal after updating
     };
   
     return (
@@ -80,7 +79,6 @@ import {
         _hover={{ transform: 'translateY(-5px)', shadow: 'xl' }}
         bg={bg}
       >
-        {/* Product image */}
         <Image
           src={product.image}
           alt={product.name}
@@ -89,7 +87,6 @@ import {
           objectFit="cover"
         />
   
-        {/* Product details */}
         <Box p={4}>
           <Heading as="h3" size="md" mb={2}>
             {product.name}
@@ -98,7 +95,6 @@ import {
             ${product.price}
           </Text>
   
-          {/* Action buttons */}
           <HStack spacing={2}>
             <IconButton
               icon={<EditIcon />}
@@ -114,7 +110,6 @@ import {
             />
           </HStack>
   
-          {/* Edit Modal */}
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
@@ -149,6 +144,18 @@ import {
                   />
                 </VStack>
               </ModalBody>
+  
+              <ModalFooter>
+                <Button
+                  colorScheme="blue"
+                  onClick={() => handleUpdateProduct(product._id, updatedProduct)}
+                >
+                  Update
+                </Button>
+                <Button variant="ghost" onClick={onClose}>
+                  Cancel
+                </Button>
+              </ModalFooter>
             </ModalContent>
           </Modal>
         </Box>
