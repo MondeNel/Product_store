@@ -62,7 +62,7 @@ export const deleteProducts = async (req, res) => {
 };
 
 /**
- * @route   PATCH /api/products/:id
+ * @route   PUT  /api/products/:id
  * @desc    Partially update an existing product by ID
  * @access  Public
  */
